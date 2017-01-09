@@ -1,6 +1,7 @@
 import THREE from 'three'
 import $ from 'jquery'
 import _ from 'lodash'
+import randomColor from 'randomcolor'
 import ThreeOrbitControls from 'three-orbit-controls'
 var OrbitControls = ThreeOrbitControls(THREE)
 import THREEFlyControls from 'three-fly-controls'
@@ -75,7 +76,8 @@ class Environment {
   }
 
   startDrawing (e) {
-    if(e.key === " "){
+    if((e.key === " ") && (this.painting === false)){
+        this.pointColor = randomColor()
         this.painting = true
     }
     // this.drawing = new THREE.Points(this.geometry)
@@ -103,7 +105,7 @@ class Environment {
       var orbit = this.getOrbit(position)
       var orbitGeometry = new THREE.Geometry()
       orbitGeometry.vertices.push(...orbit)
-      var orbitMaterial = new THREE.PointsMaterial({color:0})
+      var orbitMaterial = new THREE.PointsMaterial({color:this.pointColor})
       var orbitMesh = new THREE.Points(orbitGeometry,orbitMaterial)
       this.scene.add(orbitMesh)
     }
