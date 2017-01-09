@@ -1,0 +1,141 @@
+import THREE from 'three'
+import $ from 'jquery'
+import _ from 'lodash'
+import ThreeOrbitControls from 'three-orbit-controls'
+var OrbitControls = ThreeOrbitControls(THREE)
+import THREEFlyControls from 'three-fly-controls'
+THREEFlyControls(THREE)
+import WindowResize from 'three-window-resize'
+
+class Environment {
+
+  constructor () {
+    this.scene = new THREE.Scene()
+
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000)
+    this.camera.position.x = 0
+    this.camera.position.y = 0
+    this.camera.position.z = 100
+    this.camera.lookAt(new THREE.Vector3(0,0,0))
+
+
+
+
+    this.renderer = new THREE.WebGLRenderer({alpha: true, canvas: $('#three-canvas')[0]})
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.renderer.setClearColor(0xffffff, 1)
+
+    this.controls = new OrbitControls(this.camera)
+    // this.controls = new THREE.FlyControls(this.camera, this.renderer.domElement)
+    // this.controls.movementSpeed = 0.1
+
+    this.painting = false
+
+    this.c6 = new THREE.Matrix3()
+    this.c6.set(
+              1,-1,0,
+              1,0,0,
+              0,0,1
+            )
+
+    this.drawSymmetryCenters()
+
+    // console.log(this.c6.applyToVector3Array([1,0,1]))
+
+
+
+    var windowResize = new WindowResize(this.renderer, this.camera)
+
+  }
+
+  render () {
+    this.renderer.render(this.scene, this.camera)
+  }
+
+  // 'private'
+
+  drawSymmetryCenters () {
+    //p6
+    var t1 = new THREE.Vector3(30,0,0)
+    var t2 = new THREE.Vector3(30,30,0)
+    var w = new THREE.Vector3(0,0,0)
+    var centers = []
+    for(var i = -10; i<11; i++){
+      for(var j = -10; j<11; j++){
+        var u = w.clone()
+        u = u.addScaledVector(t1,i)
+        u = u.addScaledVector(t2,j)
+        centers.push(u)
+      }
+    }
+    this.geometry = new THREE.Geometry()
+    this.geometry.vertices.push(...centers)
+    var centersMesh = new THREE.Points(this.geometry)
+    this.scene.add(centersMesh)
+  }
+
+  startDrawing (e) {
+    if(e.key === " "){
+        this.painting = true
+    }
+    // this.drawing = new THREE.Points(this.geometry)
+    // this.scene.add(this.drawing)
+  }
+
+  stopDrawing (e) {
+    if(e.key === " "){
+      this.painting = false
+    }
+    // this.geometry = new THREE.Geometry()
+  }
+
+  draw (e) {
+    if(this.painting)
+    {
+      var vector = new THREE.Vector3(2*e.clientX/window.innerWidth - 1,
+                                    -2*e.clientY/window.innerHeight + 1,
+                                    0.5
+                                  )
+      vector.unproject( this.camera )
+      var direction = vector.sub( this.camera.position ).normalize()
+      var distance = - this.camera.position.z / direction.z
+      var position = this.camera.position.clone().add( direction.multiplyScalar( distance ) )
+      var orbit = this.getOrbit(position)
+      var orbitGeometry = new THREE.Geometry()
+      orbitGeometry.vertices.push(...orbit)
+      var orbitMaterial = new THREE.PointsMaterial({color:0})
+      var orbitMesh = new THREE.Points(orbitGeometry,orbitMaterial)
+      this.scene.add(orbitMesh)
+    }
+  }
+
+  getOrbit (v) {
+
+    var orbit = []
+    //p6
+    var t1 = new THREE.Vector3(30,0,0)
+    var t2 = new THREE.Vector3(30,30,0)
+    var w = v.clone()
+    var row = []
+    for(var i = -10; i<11; i++){
+      for(var j = -10; j<11; j++){
+        var u = w.clone()
+        u = u.addScaledVector(t1,i)
+        u = u.addScaledVector(t2,j)
+        row.push(u)
+      }
+    }
+    // row = row.map((u)=>{return new THREE.Vector3(...this.c6.applyToVector3Array([u.x,u.y,u.z]))})
+    orbit.push(...row)
+    var newRow = row
+    for(var i = 0; i<6; i++){
+      newRow = newRow.map((u)=>{return new THREE.Vector3(...this.c6.applyToVector3Array([u.x,u.y,u.z]))})
+      orbit.push(...newRow)
+      // newRow = _.range(-10,10).map((u) => {return u.add(t)})
+    }
+    return orbit
+  }
+
+}
+
+export default Environment
