@@ -137,7 +137,28 @@ var getOrbit = function (origin,group) {
     orbit.push(...pts)
   }
   if(group === 9){
-    //TODO
+    //cmm
+    //has rhombic lattice
+    var translation1 = new THREE.Vector3(20,10,0)
+    var translation2 = new THREE.Vector3(20,-10,0)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group D2, symmorphic, different action than pmm
+    var reflectionAxis1 = translation1.clone()
+    reflectionAxis1.add(translation2)
+    reflectionAxis1.normalize()
+    var reflectionAxis2 = translation2.clone()
+    reflectionAxis2.sub(translation1)
+    reflectionAxis2.normalize()
+    var reflectionOffset = new THREE.Vector3(0,0,0)
+    for(var i = 0; i<1; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>reflect(u,reflectionAxis1,reflectionOffset)))
+    }
+    for(var i = 0; i<1; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>reflect(u,reflectionAxis2,reflectionOffset)))
+    }
+    orbit.push(...pts)
   }
   if(group === 10){
     //TODO
