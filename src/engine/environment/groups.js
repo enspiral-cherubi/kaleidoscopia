@@ -218,7 +218,18 @@ var getOrbit = function (origin,group) {
     orbit.push(...pts)
   }
   if(group === 13){
-    //TODO
+    //p3
+    //has square lattice
+    var translation1 = new THREE.Vector3(30,0,0)
+    var translation2 = rotate(translation1,new THREE.Vector3(0,0,1),2*Math.PI/3)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group C3, symmorphic
+    var c3rotationCenter = new THREE.Vector3(0,0,1)
+    for(var i = 0; i<3; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>rotate(u,c3rotationCenter,2*Math.PI/3)))
+    }
+    orbit.push(...pts)
   }
   if(group === 14){
     //TODO
