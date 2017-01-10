@@ -95,7 +95,7 @@ var getOrbit = function (origin,group) {
     var translation1 = new THREE.Vector3(20,0,0)
     var translation2 = new THREE.Vector3(0,40,0)
     var pts = makeLattice(origin,translation1,translation2)
-    //point group D2, non-symmorphic
+    //point group D2, non-symmorphic in one reflection
     var reflectionAxis = translation2.clone()
     reflectionAxis.normalize()
     var reflectionOffset = new THREE.Vector3(0,0,0)
@@ -113,7 +113,28 @@ var getOrbit = function (origin,group) {
     orbit.push(...pts)
   }
   if(group === 8){
-    //TODO
+    //pgg
+    //has rectangular lattice
+    var translation1 = new THREE.Vector3(20,0,0)
+    var translation2 = new THREE.Vector3(0,40,0)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group D2, non-symmorphic in two reflections
+    var glideAxis1 = translation1.clone()
+    glideAxis1.normalize()
+    glideAxis1.multiplyScalar(0.5)
+    var glideOffset1 = new THREE.Vector3(0,0,0)
+    var glideAxis2 = translation2.clone()
+    glideAxis2.multiplyScalar(0.5)
+    var glideOffset2 = new THREE.Vector3(0,0,0)
+    for(var i = 0; i<1; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>glideReflect(u,glideAxis1,glideOffset1)))
+    }
+    for(var i = 0; i<1; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>glideReflect(u,glideAxis2,glideOffset2)))
+    }
+    orbit.push(...pts)
   }
   if(group === 9){
     //TODO
