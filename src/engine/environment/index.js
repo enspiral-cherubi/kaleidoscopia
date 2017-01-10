@@ -7,6 +7,7 @@ var OrbitControls = ThreeOrbitControls(THREE)
 import THREEFlyControls from 'three-fly-controls'
 THREEFlyControls(THREE)
 import WindowResize from 'three-window-resize'
+import getOrbit from './groups'
 
 class Environment {
 
@@ -32,12 +33,23 @@ class Environment {
 
     this.painting = false
 
+    // this.spaceGroup = 1+Math.floor(Math.random()*17)
+    this.spaceGroup = 4
+    console.log("Hi! You are drawing with wallpaper group number " + this.spaceGroup + ".")
+
+    this.c2 = new THREE.Matrix3()
+    this.c2.set(
+      -1,0,0,
+      0,-1,0,
+      0,0,1
+    )
+
     this.c6 = new THREE.Matrix3()
     this.c6.set(
-              1,-1,0,
-              1,0,0,
-              0,0,1
-            )
+      1,-1,0,
+      1,0,0,
+      0,0,1
+    )
 
     this.drawSymmetryCenters()
 
@@ -102,7 +114,7 @@ class Environment {
       var direction = vector.sub( this.camera.position ).normalize()
       var distance = - this.camera.position.z / direction.z
       var position = this.camera.position.clone().add( direction.multiplyScalar( distance ) )
-      var orbit = this.getOrbit(position)
+      var orbit = getOrbit(position,this.spaceGroup)
       var orbitGeometry = new THREE.Geometry()
       orbitGeometry.vertices.push(...orbit)
       var orbitMaterial = new THREE.PointsMaterial({color:this.pointColor})
@@ -111,32 +123,6 @@ class Environment {
     }
   }
 
-  getOrbit (v) {
-
-    var orbit = []
-    //p6
-    var t1 = new THREE.Vector3(30,0,0)
-    var t2 = new THREE.Vector3(30,30,0)
-    var w = v.clone()
-    var row = []
-    for(var i = -10; i<11; i++){
-      for(var j = -10; j<11; j++){
-        var u = w.clone()
-        u = u.addScaledVector(t1,i)
-        u = u.addScaledVector(t2,j)
-        row.push(u)
-      }
-    }
-    // row = row.map((u)=>{return new THREE.Vector3(...this.c6.applyToVector3Array([u.x,u.y,u.z]))})
-    orbit.push(...row)
-    var newRow = row
-    for(var i = 0; i<6; i++){
-      newRow = newRow.map((u)=>{return new THREE.Vector3(...this.c6.applyToVector3Array([u.x,u.y,u.z]))})
-      orbit.push(...newRow)
-      // newRow = _.range(-10,10).map((u) => {return u.add(t)})
-    }
-    return orbit
-  }
 
 }
 
