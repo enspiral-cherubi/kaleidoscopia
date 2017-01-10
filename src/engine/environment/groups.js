@@ -166,7 +166,7 @@ var getOrbit = function (origin,group) {
     var translation1 = new THREE.Vector3(30,0,0)
     var translation2 = new THREE.Vector3(0,30,0)
     var pts = makeLattice(origin,translation1,translation2)
-    //point group C4
+    //point group C4, symmorphic
     var c4rotationCenter = new THREE.Vector3(0,0,1)
     for(var i = 0; i<4; i++){
       //iterate over point group
@@ -175,7 +175,25 @@ var getOrbit = function (origin,group) {
     orbit.push(...pts)
   }
   if(group === 11){
-    //TODO
+    //p4m
+    //has square lattice
+    var translation1 = new THREE.Vector3(30,0,0)
+    var translation2 = new THREE.Vector3(0,30,0)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group D4, symmorphic
+    var c4rotationCenter = new THREE.Vector3(0,0,1)
+    var reflectionAxis = translation1.clone()
+    reflectionAxis.normalize()
+    var reflectionOffset = new THREE.Vector3(0,0,0)
+    for(var i = 0; i<4; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>rotate(u,c4rotationCenter,Math.PI/2)))
+    }
+    for(var i = 0; i<1; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>reflect(u,reflectionAxis,reflectionOffset)))
+    }
+    orbit.push(...pts)
   }
   if(group === 12){
     //TODO
