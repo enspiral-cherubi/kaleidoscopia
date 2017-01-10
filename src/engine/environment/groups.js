@@ -196,7 +196,26 @@ var getOrbit = function (origin,group) {
     orbit.push(...pts)
   }
   if(group === 12){
-    //TODO
+    //p4g
+    //has square lattice
+    var translation1 = new THREE.Vector3(30,0,0)
+    var translation2 = new THREE.Vector3(0,30,0)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group D4, non-symmorphic with one glide reflection
+    var c4rotationCenter = new THREE.Vector3(0,0,1)
+    var glideAxis = translation1.clone()
+    glideAxis.add(translation2)
+    glideAxis.multiplyScalar(0.5)
+    var glideOffset = new THREE.Vector3(0,0,0)
+    for(var i = 0; i<4; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>rotate(u,c4rotationCenter,Math.PI/2)))
+    }
+    for(var i = 0; i<1; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>glideReflect(u,glideAxis,glideOffset)))
+    }
+    orbit.push(...pts)
   }
   if(group === 13){
     //TODO
