@@ -251,10 +251,28 @@ var getOrbit = function (origin,group) {
       //iterate over point group
       pts.push(...pts.map((u)=>reflect(u,reflectionAxis,reflectionOffset)))
     }
-    orbit.push(...pts)  }
-  if(group === 15){
-    //TODO
+    orbit.push(...pts)
   }
+  if(group === 15){
+    //p31m
+    //has triangular lattice
+    var translation1 = new THREE.Vector3(30,0,0)
+    var translation2 = rotate(translation1,new THREE.Vector3(0,0,1),Math.PI/3)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group D3, symmorphic
+    var c3rotationCenter = new THREE.Vector3(0,0,1)
+    var reflectionAxis = translation1.clone()
+    reflectionAxis.normalize()
+    var reflectionOffset = new THREE.Vector3(0,0,0)
+    for(var i = 0; i<3; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>rotate(u,c3rotationCenter,2*Math.PI/3)))
+    }
+    for(var i = 0; i<2; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>reflect(u,reflectionAxis,reflectionOffset)))
+    }
+    orbit.push(...pts)  }
   if(group === 16){
     //p6
     var t1 = new THREE.Vector3(30,0,0)
