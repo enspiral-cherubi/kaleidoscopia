@@ -242,14 +242,13 @@ var getOrbit = function (origin,group) {
     var reflectionAxis = translation1.clone()
     reflectionAxis.add(translation2)
     reflectionAxis.normalize()
-    var reflectionOffset = new THREE.Vector3(0,0,0)
     for(var i = 0; i<3; i++){
       //iterate over point group
       pts.push(...pts.map((u)=>rotate(u,c3rotationCenter,2*Math.PI/3)))
     }
     for(var i = 0; i<2; i++){
       //iterate over point group
-      pts.push(...pts.map((u)=>reflect(u,reflectionAxis,reflectionOffset)))
+      pts.push(...pts.map((u)=>reflect(u,reflectionAxis)))
     }
     orbit.push(...pts)
   }
@@ -263,41 +262,47 @@ var getOrbit = function (origin,group) {
     var c3rotationCenter = new THREE.Vector3(0,0,1)
     var reflectionAxis = translation1.clone()
     reflectionAxis.normalize()
-    var reflectionOffset = new THREE.Vector3(0,0,0)
     for(var i = 0; i<3; i++){
       //iterate over point group
       pts.push(...pts.map((u)=>rotate(u,c3rotationCenter,2*Math.PI/3)))
     }
     for(var i = 0; i<2; i++){
       //iterate over point group
-      pts.push(...pts.map((u)=>reflect(u,reflectionAxis,reflectionOffset)))
+      pts.push(...pts.map((u)=>reflect(u,reflectionAxis)))
     }
     orbit.push(...pts)  }
   if(group === 16){
     //p6
-    var t1 = new THREE.Vector3(30,0,0)
-    var t2 = new THREE.Vector3(30,30,0)
-    var w = origin.clone()
-    var row = []
-    for(var i = -10; i<11; i++){
-      for(var j = -10; j<11; j++){
-        var u = w.clone()
-        u = u.addScaledVector(t1,i)
-        u = u.addScaledVector(t2,j)
-        row.push(u)
-      }
+    //has triangular lattice
+    var translation1 = new THREE.Vector3(30,0,0)
+    var translation2 = rotate(translation1,new THREE.Vector3(0,0,1),2*Math.PI/3)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group C6, symmorphic
+    var c6rotationCenter = new THREE.Vector3(0,0,1)
+    for(var i = 0; i<5; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>rotate(u,c6rotationCenter,Math.PI/3)))
     }
-    // row = row.map((u)=>{return new THREE.Vector3(...this.c6.applyToVector3Array([u.x,u.y,u.z]))})
-    orbit.push(...row)
-    var newRow = row
-    for(var i = 0; i<6; i++){
-      newRow = newRow.map((u)=>{return new THREE.Vector3(...this.c6.applyToVector3Array([u.x,u.y,u.z]))})
-      orbit.push(...newRow)
-      // newRow = _.range(-10,10).map((u) => {return u.add(t)})
-    }
+    orbit.push(...pts)
   }
   if(group === 17){
-    //TODO
+    //p6
+    //has triangular lattice
+    var translation1 = new THREE.Vector3(30,0,0)
+    var translation2 = rotate(translation1,new THREE.Vector3(0,0,1),2*Math.PI/3)
+    var pts = makeLattice(origin,translation1,translation2)
+    //point group D6, symmorphic
+    var c6rotationCenter = new THREE.Vector3(0,0,1)
+    var reflectionAxis = translation1.clone()
+    reflectionAxis.normalize()
+    for(var i = 0; i<2; i++){
+      pts.push(...pts.map((u)=>reflect(u,reflectionAxis)))
+    }
+    for(var i = 0; i<5; i++){
+      //iterate over point group
+      pts.push(...pts.map((u)=>rotate(u,c6rotationCenter,Math.PI/3)))
+    }
+    orbit.push(...pts)
   }
   return orbit
 }
@@ -322,18 +327,18 @@ var rotate = function(position,axis,angle) {
   return newPosition
 }
 
-var reflect = function(position,axis,offset) {
+var reflect = function(position,axis) {
   var axialComponent = position.clone()
   axialComponent = axialComponent.projectOnVector(axis)
   var normalComponent = position.clone()
   normalComponent = normalComponent.sub(axialComponent)
-  return axialComponent.sub(normalComponent).addScaledVector(offset,2)
+  return axialComponent.sub(normalComponent)
 }
 
-var glideReflect = function(position,glide,offset) {
+var glideReflect = function(position,glide) {
   var axis = glide.clone()
   axis.normalize()
-  return reflect(position,axis,offset).add(glide)
+  return reflect(position,axis).add(glide)
 }
 
 
