@@ -307,6 +307,9 @@ var getOrbit = function (origin,group) {
   return orbit
 }
 
+
+//private
+
 var makeLattice = function(origin,translation1,translation2) {
   var w = origin.clone()
   var row = []
