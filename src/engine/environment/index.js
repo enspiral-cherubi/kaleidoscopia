@@ -32,6 +32,7 @@ class Environment {
     // this.controls.movementSpeed = 0.1
 
     this.painting = false
+    this.colors = true
 
     this.spaceGroup = 1+Math.floor(Math.random()*17)
     // this.spaceGroup = 16
@@ -73,9 +74,25 @@ class Environment {
 
   // 'private'
 
+  toggleColors (e) {
+    if (e.key === 'c'){
+      console.log('meow')
+      if (this.colors){
+        this.colors = false
+      } else{
+        this.colors = true
+      }
+    }
+  }
+
   startDrawing (e) {
     if((e.key === " ") && (this.painting === false)){
-        this.pointColor = randomColor()
+        if(this.colors){
+          this.pointColor = randomColor()
+        }
+        else {
+          this.pointColor = 0
+        }
         this.painting = true
     }
     // this.drawing = new THREE.Points(this.geometry)
