@@ -17,6 +17,7 @@ class Engine {
     $(window).keydown((e)=>{self.environment.startDrawing(e)})
     $(window).mousemove((e)=>{self.environment.draw(e)})
     $(window).keyup((e)=>{self.environment.stopDrawing(e)})
+    $(window).keypress((e)=>{self.environment.toggleColors(e)})
   }
 
   start () {

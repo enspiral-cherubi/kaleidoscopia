@@ -32,10 +32,18 @@ class Environment {
     // this.controls.movementSpeed = 0.1
 
     this.painting = false
+    this.colors = true
 
-    // this.spaceGroup = 1+Math.floor(Math.random()*17)
-    this.spaceGroup = 16
+    this.spaceGroup = 1+Math.floor(Math.random()*17)
+    // this.spaceGroup = 16
     console.log("Hi! You are drawing with wallpaper group number " + this.spaceGroup + ".")
+
+    var symmetryCenters = getOrbit(new THREE.Vector3(0,0,0),this.spaceGroup)
+    var symmetryCentersGeometry = new THREE.Geometry()
+    symmetryCentersGeometry.vertices.push(...symmetryCenters)
+    var symmetryCentersMaterial = new THREE.PointsMaterial({color:0, opacity:0.4})
+    var symmetryCentersMesh = new THREE.Points(symmetryCentersGeometry,symmetryCentersMaterial)
+    this.scene.add(symmetryCentersMesh)
 
     this.c2 = new THREE.Matrix3()
     this.c2.set(
@@ -51,7 +59,6 @@ class Environment {
       0,0,1
     )
 
-    this.drawSymmetryCenters()
 
     // console.log(this.c6.applyToVector3Array([1,0,1]))
 
@@ -67,29 +74,25 @@ class Environment {
 
   // 'private'
 
-  drawSymmetryCenters () {
-    //p6
-    var t1 = new THREE.Vector3(30,0,0)
-    var t2 = new THREE.Vector3(30,30,0)
-    var w = new THREE.Vector3(0,0,0)
-    var centers = []
-    for(var i = -10; i<11; i++){
-      for(var j = -10; j<11; j++){
-        var u = w.clone()
-        u = u.addScaledVector(t1,i)
-        u = u.addScaledVector(t2,j)
-        centers.push(u)
+  toggleColors (e) {
+    if (e.key === 'c'){
+      console.log('meow')
+      if (this.colors){
+        this.colors = false
+      } else{
+        this.colors = true
       }
     }
-    this.geometry = new THREE.Geometry()
-    this.geometry.vertices.push(...centers)
-    var centersMesh = new THREE.Points(this.geometry)
-    this.scene.add(centersMesh)
   }
 
   startDrawing (e) {
     if((e.key === " ") && (this.painting === false)){
-        this.pointColor = randomColor()
+        if(this.colors){
+          this.pointColor = randomColor()
+        }
+        else {
+          this.pointColor = 0
+        }
         this.painting = true
     }
     // this.drawing = new THREE.Points(this.geometry)
