@@ -34,7 +34,7 @@ class Environment {
     this.painting = false
 
     // this.spaceGroup = 1+Math.floor(Math.random()*17)
-    this.spaceGroup = 13
+    this.spaceGroup = 14
     console.log("Hi! You are drawing with wallpaper group number " + this.spaceGroup + ".")
 
     this.c2 = new THREE.Matrix3()
