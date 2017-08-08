@@ -14,10 +14,11 @@ class Engine {
   bindEventListeners () {
     var self = this
     $(window).load(this.view.closeLoadingScreen)
-    $(window).keydown((e)=>{self.environment.startDrawing(e)})
-    $(window).mousemove((e)=>{self.environment.draw(e)})
-    $(window).keyup((e)=>{self.environment.stopDrawing(e)})
-    $(window).keypress((e)=>{self.environment.toggleColors(e)})
+    $(window).mousedown((e)=>{self.environment.startDrawing(e)})
+    // $(window).keydown((e)=>{self.environment.startDrawing(e)})
+    // $(window).mousemove((e)=>{self.environment.draw(e)})
+    $(window).mouseup((e)=>{self.environment.stopDrawing(e)})
+    // $(window).keypress((e)=>{self.environment.toggleColors(e)})
   }
 
   start () {

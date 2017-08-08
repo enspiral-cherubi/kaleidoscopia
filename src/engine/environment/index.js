@@ -31,33 +31,38 @@ class Environment {
     // this.controls = new THREE.FlyControls(this.camera, this.renderer.domElement)
     // this.controls.movementSpeed = 0.1
 
+    this.circles = []
+    this.noCircles = true
+    this.firstCircleRadius = 0
+    this.secondCircle = false
+
     this.painting = false
     this.colors = true
 
-    this.spaceGroup = 1+Math.floor(Math.random()*17)
+    // this.spaceGroup = 1+Math.floor(Math.random()*17)
     // this.spaceGroup = 16
-    console.log("Hi! You are drawing with wallpaper group number " + this.spaceGroup + ".")
-
-    var symmetryCenters = getOrbit(new THREE.Vector3(0,0,0),this.spaceGroup)
-    var symmetryCentersGeometry = new THREE.Geometry()
-    symmetryCentersGeometry.vertices.push(...symmetryCenters)
-    var symmetryCentersMaterial = new THREE.PointsMaterial({color:0, opacity:0.4})
-    var symmetryCentersMesh = new THREE.Points(symmetryCentersGeometry,symmetryCentersMaterial)
-    this.scene.add(symmetryCentersMesh)
-
-    this.c2 = new THREE.Matrix3()
-    this.c2.set(
-      -1,0,0,
-      0,-1,0,
-      0,0,1
-    )
-
-    this.c6 = new THREE.Matrix3()
-    this.c6.set(
-      1,-1,0,
-      1,0,0,
-      0,0,1
-    )
+    // console.log("Hi! You are drawing with wallpaper group number " + this.spaceGroup + ".")
+    //
+    // var symmetryCenters = getOrbit(new THREE.Vector3(0,0,0),this.spaceGroup)
+    // var symmetryCentersGeometry = new THREE.Geometry()
+    // symmetryCentersGeometry.vertices.push(...symmetryCenters)
+    // var symmetryCentersMaterial = new THREE.PointsMaterial({color:0, opacity:0.4})
+    // var symmetryCentersMesh = new THREE.Points(symmetryCentersGeometry,symmetryCentersMaterial)
+    // this.scene.add(symmetryCentersMesh)
+    //
+    // this.c2 = new THREE.Matrix3()
+    // this.c2.set(
+    //   -1,0,0,
+    //   0,-1,0,
+    //   0,0,1
+    // )
+    //
+    // this.c6 = new THREE.Matrix3()
+    // this.c6.set(
+    //   1,-1,0,
+    //   1,0,0,
+    //   0,0,1
+    // )
 
 
     // console.log(this.c6.applyToVector3Array([1,0,1]))
@@ -69,6 +74,9 @@ class Environment {
   }
 
   render () {
+    if(this.noCircles && this.firstCircleRadius){
+      this.firstCircleRadius += 0.1
+    }
     this.renderer.render(this.scene, this.camera)
   }
 
@@ -86,6 +94,17 @@ class Environment {
   }
 
   startDrawing (e) {
+    console.log('meow?')
+    if(this.noCircles){
+      console.log('meow')
+      this.firstCircleRadius = 0.1
+      firstCirclePosition = this.getPosition(e)
+    } else {
+      //draw next circle
+    }
+
+
+
     if((e.key === " ") && (this.painting === false)){
         if(this.colors){
           this.pointColor = randomColor()
@@ -100,10 +119,33 @@ class Environment {
   }
 
   stopDrawing (e) {
-    if(e.key === " "){
-      this.painting = false
+    if(this.noCircles){
+      var firstCircleColor = randomColor()
+      var firstCircleGeometry = new THREE.CircleGeometry(this.firstCircleRadius,32)
+      firstCircleGeometry.translate(firstCirclePosition.x,
+                                    firstCirclePosition.y,
+                                    firstCirclePosition.z)
+      var firstCircleMaterial = new THREE.MeshBasicMaterial({color:firstCircleColor})
+      var firstCircleMesh = new THREE.Mesh(firstCircleGeometry,firstCircleMaterial)
+      this.scene.add(firstCircleMesh)
+      this.circles.push([firstCirclePosition,this.firstCircleRadius])
     }
+    // if(e.key === " "){
+    //   this.painting = false
+    // }
     // this.geometry = new THREE.Geometry()
+  }
+
+  getPosition (e) {
+    var vector = new THREE.Vector3(2*e.clientX/window.innerWidth - 1,
+                                  -2*e.clientY/window.innerHeight + 1,
+                                  0.5
+                                )
+    vector.unproject( this.camera )
+    var direction = vector.sub( this.camera.position ).normalize()
+    var distance = - this.camera.position.z / direction.z
+    var position = this.camera.position.clone().add( direction.multiplyScalar( distance ) )
+    return position
   }
 
   draw (e) {
