@@ -1,6 +1,6 @@
 ## kaleidoscopia
 
-use the 2d space groups to generate 2d kaleidoscope patterns
+use the 2d space groups to generate 2d kaleidoscope patterns, deployed here https://math.berkeley.edu/~ragnar/wallpaper/
 
 ### install
 
