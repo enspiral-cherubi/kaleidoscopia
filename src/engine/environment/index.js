@@ -31,7 +31,7 @@ class Environment {
 
     this.controls = new OrbitControls(this.camera)
     this.controls.enabled = false
-    this.gui.add(this, 'controls.enabled').listen()
+    this.gui.add(this.controls, 'enabled').listen()
     // this.controls = new THREE.FlyControls(this.camera, this.renderer.domElement)
     // this.controls.movementSpeed = 0.1
 
