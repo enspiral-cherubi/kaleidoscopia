@@ -8,6 +8,7 @@ import THREEFlyControls from 'three-fly-controls'
 THREEFlyControls(THREE)
 import WindowResize from 'three-window-resize'
 import getOrbit from './groups'
+import dat from 'dat.gui'
 
 class Environment {
 
@@ -20,14 +21,18 @@ class Environment {
     this.camera.position.z = 100
     this.camera.lookAt(new THREE.Vector3(0,0,0))
 
-
-
+    this.gui = new dat.GUI()
+    // var modes = this.gui.addFolder('Modes');
+    this.tiltable = false
+    this.gui.add(this, 'tiltable').listen()
+    this.gui.close()
 
     this.renderer = new THREE.WebGLRenderer({alpha: true, canvas: $('#three-canvas')[0]})
     this.renderer.setSize(window.innerWidth, window.innerHeight)
     this.renderer.setClearColor(0xffffff, 1)
 
     this.controls = new OrbitControls(this.camera)
+    this.controls.enabled = this.tiltable
     // this.controls = new THREE.FlyControls(this.camera, this.renderer.domElement)
     // this.controls.movementSpeed = 0.1
 
